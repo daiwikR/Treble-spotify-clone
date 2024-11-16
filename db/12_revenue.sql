@@ -1,1 +1,0 @@
-INSERT INTO Revenue(reproduction, paid) VALUES(1, 0.30);

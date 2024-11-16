@@ -1,19 +1,14 @@
-create database spotty;
-use spotty;
+-- creating and using the database
+create database treble;
+use treble;
 
-create table Revenue(
-    reproduction INT,
-    paid float(2),
-
-    primary key(reproduction, paid)
-);
-
+-- creating all the tables needed
 create table Album(
     id char(22) primary key, 
-    title varchar(40) not null, 
+    title varchar(400) not null, 
     numberOfTracks int default 0, 
-    image varchar(100) default '/', 
-    durationMs int not null, 
+    image varchar(1000) default '/', 
+    duration int not null, 
 	releaseDate date not null
 );
 
@@ -21,19 +16,9 @@ create table Artist(
     id char(22) primary key, 
     name varchar(30) not null unique, 
     isVerified int not null, 
-    nFollowers int default 0, 
+    followers int default 0, 
     isBand int not null,
     image varchar(200) default '/'
-);
-
-create table ArtistBelongsToBand(
-    singleArtist char(22), 
-    band char(22), 
-    role varchar(20),
-    
-    primary key (singleArtist, band),
-    foreign key (singleArtist) references Artist(id) on delete cascade,
-    foreign key (band) references Artist(id) on delete cascade
 );
 
 create table Making(
@@ -48,29 +33,9 @@ create table Making(
 create table Track(
     id char(22) primary key,
     title varchar(80) not null,
-    audio varchar(300) default '/',
-    danceability float(3) not null,
-    energy float(3) not null,
-    loudness float(3) not null, 
-    speechiness float(3) not null, 
-    acousticness float(3) not null, 
-    liveness float(3) not null, 
-    valence float(3) not null, 
-    instrumentalness float(3) not null, 
-    tempo int not null, 
-    durationMs int not null, 
+    duration int not null, 
     isExplicit int not null,
     plays int default 0
-);
-
-create table Similarity(
-    track1 char(22), 
-    track2 char(22), 
-    amount float(3) not null,
-
-    primary key(track1, track2),
-    foreign key (track1) references Track(id) on delete cascade,
-    foreign key (track2) references Track(id) on delete cascade
 );
 
 create table TrackBelongsToAlbum(
@@ -159,8 +124,6 @@ create table Playlist(
     id char(22) primary key, 
     creator varchar(30) not null,
     name varchar(30) not null, 
-    description varchar(100) default '', 
-    isDailySuggestion int default 0,
 
     foreign key (creator) references User(id) on delete cascade
 );
@@ -173,13 +136,6 @@ create table TrackBelongsToPlaylist(
     primary key(track, playlist),
     foreign key (track) references Track(id) on delete cascade,
     foreign key (playlist) references Playlist(id) on delete cascade
-);
-
-create table DailySuggestion(
-    id char(22) primary key, 
-    suggestedFor char(22) not null,
-    
-    foreign key (suggestedFor) references User(id) on delete cascade
 );
 
 create table LikesPlaylist(
@@ -202,14 +158,15 @@ create table LikesAlbum(
     foreign key (user) references User(id) on delete cascade
 );
 
-show tables;
+-- show tables;
 
-
-CREATE TRIGGER nFollowerArtist
+-- trigger to update the number of followers of an artist
+CREATE TRIGGER followerArtist
 AFTER INSERT ON FollowArtist
 FOR EACH ROW
-UPDATE Artist SET Artist.nFollowers = 1 + Artist.nFollowers WHERE Artist.id = new.artist;
+UPDATE Artist SET Artist.followers = 1 + Artist.followers WHERE Artist.id = new.artist;
 
+-- trigger to get number of listeners for a track
 CREATE TRIGGER trackPlays
 AFTER INSERT ON ListenedTo
 FOR EACH ROW

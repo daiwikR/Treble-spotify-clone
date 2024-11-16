@@ -1,16 +1,12 @@
-#-----Ricerca-----
 
-#-----per artisti-----
 SELECT * 
 FROM Artist 
 WHERE Artist.name LIKE '%Imagine%';
 
-#-----per utenti-----
 SELECT * 
 FROM User 
 WHERE User.username LIKE '%Emma rock%';
 
-#-----per playlist-----
 SELECT * 
 FROM Playlist,User 
 WHERE User.id=Playlist.creator AND Playlist.name LIKE '%This is Gospel%';

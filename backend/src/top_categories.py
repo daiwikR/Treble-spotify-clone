@@ -14,7 +14,7 @@ TOP_10 = (
 )
 
 TRACK_DATA = (
-    "SELECT T.id, T.title, Al.image, A.name, T.audio, T.durationMs "
+    "SELECT T.id, T.title, Al.image, A.name, T.duration "
     "FROM Track T , Album Al, Artist A , TrackBelongsToAlbum Tb , Making M " 
     "WHERE T.id=Tb.track and Tb.album=Al.id and Al.id=M.album and M.artist=A.id "
     "and T.id = '{}'"
@@ -27,7 +27,6 @@ TOP_10_GLOBAL = (
     "ORDER BY num desc "
     "limit 10 "
 )   
-
 
 @top_categories_bp.route('/', methods=['POST'])
 def top_categories():
@@ -53,8 +52,7 @@ def top_categories():
                     "songName": track['title'],
                     "songimg": track['image'],
                     "songArtist": track['name'],
-                    "link": track['audio'],
-                    "trackTime": track['durationMs']
+                    "trackTime": track['duration']
                 }
             )
             index += 1
@@ -78,8 +76,7 @@ def top_categories():
                     "songName": track['title'],
                     "songimg": track['image'],
                     "songArtist": track['name'],
-                    "link": track['audio'],
-                    "trackTime": track['durationMs']
+                    "trackTime": track['duration']
                 }
             )
             index += 1

@@ -10,7 +10,6 @@ from recently_played import recently_played_bp
 from top_categories import top_categories_bp
 from library import library_bp
 
-
 app.register_blueprint(preview_bp, url_prefix='/preview')
 app.register_blueprint(suggester_bp, url_prefix='/suggester')
 app.register_blueprint(search_bp, url_prefix='/search')

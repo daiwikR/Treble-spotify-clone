@@ -6,7 +6,7 @@ from hovercolor import getColor
 search_bp = Blueprint('search', __name__)
 
 TRACK_DATA = (
-    "SELECT T.id, T.title, Al.image, A.name, T.audio, T.durationMs "
+    "SELECT T.id, T.title, Al.image, A.name, T.duration "
     "FROM Track T , Album Al, Artist A , TrackBelongsToAlbum Tb , Making M " 
     "WHERE T.id=Tb.track and Tb.album=Al.id and Al.id=M.album and M.artist=A.id "
     "and T.title like '%{}%'"
@@ -27,7 +27,7 @@ ALBUM_DATA = (
 )
 
 GET_TRACKS_FROM_ALBUM = (
-    "SELECT Tb.position, T.id, T.title, T.audio, T.durationMs "
+    "SELECT Tb.position, T.id, T.title, T.duration "
     "FROM Track T,  TrackBelongsToAlbum Tb, Album AL "
     "WHERE T.id=Tb.track and Tb.album=Al.id "
     "and Al.id = '{}'"
@@ -36,12 +36,12 @@ GET_TRACKS_FROM_ALBUM = (
 PLAYLIST_DATA = (
     "SELECT P.name, P.id, U.username as creator "
     "FROM Playlist P, User U "
-    "WHERE U.id=P.creator and P.isDailySuggestion=0 "
+    "WHERE U.id=P.creator "
     "and name like '%{}%'"
 )
 
 GET_TRACKS_FROM_PLAYLIST = (
-    "SELECT T.id, T.title, T.audio, T.durationMs, A.image "
+    "SELECT T.id, T.title,T.duration, A.image "
     "FROM Track T,  TrackBelongsToPlaylist Tb, Playlist P, Album A, TrackBelongsToAlbum Ta "
     "WHERE T.id=Tb.track and Tb.playlist=P.id and T.id=Ta.track and Ta.album=A.id "
     "and P.id = '{}' "
@@ -74,11 +74,9 @@ def search_tracks(query):
                 "songName": track['title'],
                 "songimg": track['image'],
                 "songArtist": track['name'],
-                "link": track['audio'],
-                "trackTime": track['durationMs']
+                "trackTime": track['duration']
             }
         )
-
     return tracks_list
 
 
@@ -96,7 +94,6 @@ def search_artists(query):
                 "songimg": artist['image'],
             }
         )
-
     return artists_list
 
 
@@ -127,13 +124,11 @@ def search_albums(query):
                     "songName": track['title'],
                     "songimg": album['image'],
                     "songArtist": album['name'],
-                    "link": track['audio'],
-                    "trackTime": track['durationMs'],
+                    "trackTime": track['duration'],
                 }
             )
 
         albums_list.append(temp)
-
     return albums_list
 
 
@@ -165,13 +160,10 @@ def search_playlists(query):
                     "songName": track['title'],
                     "songimg": track['image'],
                     "songArtist": playlist['creator'],
-                    "link": track['audio'],
-                    "trackTime": track['durationMs'],
+                    "trackTime": track['duration'],
                 }
             )
             index+=1
-
         playlists_list.append(temp)
-
     return playlists_list
     

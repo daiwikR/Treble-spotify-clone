@@ -14,7 +14,7 @@ ALBUM_DATA = (
 )
 
 GET_TRACKS_FROM_ALBUM = (
-    "SELECT Tb.position, T.id, T.title, T.audio, T.durationMs "
+    "SELECT Tb.position, T.id, T.title, T.duration "
     "FROM Track T,  TrackBelongsToAlbum Tb, Album AL "
     "WHERE T.id=Tb.track and Tb.album=Al.id "
     "and Al.id = '{}'"
@@ -64,11 +64,9 @@ def recently_played():
                     "songName": track['title'],
                     "songimg": album['image'],
                     "songArtist": album['name'],
-                    "link": track['audio'],
-                    "trackTime": track['durationMs'],
+                    "trackTime": track['duration'],
                 }
             )
-
         albums_list.append(temp)
 
     return jsonify(albums_list)

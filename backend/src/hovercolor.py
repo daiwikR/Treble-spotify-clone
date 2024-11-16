@@ -8,7 +8,6 @@ import scipy.misc
 import scipy.cluster
 from functools import lru_cache
 
-
 NUM_CLUSTERS = 5
 
 @lru_cache(None)

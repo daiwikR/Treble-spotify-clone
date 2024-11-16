@@ -16,7 +16,7 @@ ALBUM_DATA = (
 )
 
 GET_TRACKS_FROM_ALBUM = (
-    "SELECT Tb.position, T.id, T.title, T.audio, T.durationMs "
+    "SELECT Tb.position, T.id, T.title, T.duration "
     "FROM Track T,  TrackBelongsToAlbum Tb, Album AL "
     "WHERE T.id=Tb.track and Tb.album=Al.id "
     "and Al.id = '{}'"
@@ -32,17 +32,11 @@ PLAYLIST_DATA = (
 )
 
 GET_TRACKS_FROM_PLAYLIST = (
-    "SELECT T.id, T.title, T.audio, T.durationMs, A.image "
+    "SELECT T.id, T.title, T.duration, A.image "
     "FROM Track T,  TrackBelongsToPlaylist Tb, Playlist P, TrackBelongsToAlbum Ta, Album A "
     "WHERE T.id=Tb.track and Tb.playlist=P.id and T.id=Ta.track and Ta.album=A.id "
     "and P.id = '{}' "
     "ORDER BY Tb.addedDate desc"
-)
-
-GET_DAILY = (
-    "SELECT id "
-    "FROM DailySuggestion "
-    "WHERE suggestedfor = '{}'"
 )
 
 DAILY_DATA = (
@@ -58,7 +52,6 @@ def welcome():
     res = {}
     res['albums'] = search_albums(content['id'])
     res['playlists'] = search_playlists(content['id']) 
-    res['daily'] = daily(content['id']) 
     return jsonify(res)
 
 def search_albums(id):
@@ -88,13 +81,10 @@ def search_albums(id):
                     "songName": track['title'],
                     "songimg": album['image'],
                     "songArtist": album['name'],
-                    "link": track['audio'],
-                    "trackTime": track['durationMs'],
+                    "trackTime": track['duration'],
                 }
             )
-
         albums_list.append(temp)
-
     return albums_list
 
 
@@ -126,8 +116,7 @@ def search_playlists(id):
                     "songName": track['title'],
                     "songimg": track['image'],
                     "songArtist": playlist['creator'],
-                    "link": track['audio'],
-                    "trackTime": track['durationMs'],
+                    "trackTime": track['duration'],
                 }
             )
             index+=1
@@ -137,39 +126,3 @@ def search_playlists(id):
     return playlists_list
 
 
-def daily(id):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute(GET_DAILY.format(id))
-    daily = cursor.fetchone()
-
-    cursor.execute(DAILY_DATA.format(daily['id']))
-    playlist = cursor.fetchone()
-
-    temp = {
-        "title": playlist['name'],
-        "link": playlist['id'],
-        "imgUrl": "https://i.scdn.co/image/ab67616d0000b2734b37560bb0fb287011ae6a60",
-        "hoverColor": getColor("https://i.scdn.co/image/ab67616d0000b2734b37560bb0fb287011ae6a60"), 
-        "artist": "Spotty",
-        "playlistData": []
-    }
-
-    cursor.execute(GET_TRACKS_FROM_PLAYLIST.format(playlist['id']))
-    tracks = cursor.fetchall()
-
-    index = 1
-    for track in tracks:
-        temp['playlistData'].append(
-            {
-                "id":track['id'],
-                "index": str(index),
-                "songName": track['title'],
-                "songimg": "https://i.scdn.co/image/ab67616d0000b2734b37560bb0fb287011ae6a60",
-                "songArtist": playlist['creator'],
-                "link": track['audio'],
-                "trackTime": track['durationMs'],
-            }
-        )
-        index+=1
-
-    return temp

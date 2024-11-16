@@ -15,7 +15,6 @@ def library():
     else:
         return jsonify(get_all_artist(content['id']))
     
-#------
 def get_all_artist(user):
     cursor = cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute(f'''

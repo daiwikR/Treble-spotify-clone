@@ -42,16 +42,26 @@ function PlaylistTab() {
       mode: "cors",
     };
 
-    const fetchedPlaylists = await fetch(
-      "http://127.0.0.1:5000/library/get/",
-      requestOptions
-    ).then((fetchedPlaylists) => fetchedPlaylists.json());
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:5000/library/get/",
+        requestOptions
+      );
 
-    setplaylists(fetchedPlaylists);
-    setisLoading(false);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-    const newPDisplayed = fetchedPlaylists;
-    dispatch(changePDisplayed(newPDisplayed));
+      const fetchedPlaylists = await response.json();
+      setplaylists(fetchedPlaylists);
+      setisLoading(false);
+
+      const newPDisplayed = fetchedPlaylists;
+      dispatch(changePDisplayed(newPDisplayed));
+    } catch (error) {
+      console.error("Failed to fetch playlists:", error);
+      setisLoading(false);
+    }
   };
 
   useEffect(() => {

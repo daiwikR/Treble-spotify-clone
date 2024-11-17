@@ -26,25 +26,30 @@ function Home() {
       mode: "cors",
     };
 
-    const liked = await fetch(
-      "http://127.0.0.1:5000/welcome/",
-      requestOptions
-    ).then((liked) => liked.json());
+    try {
+      const liked = await fetch(
+        "http://127.0.0.1:5000/welcome/",
+        requestOptions
+      ).then((liked) => liked.json());
 
-    const listened = await fetch(
-      "http://127.0.0.1:5000/recently_played/",
-      requestOptions
-    ).then((listened) => listened.json());
+      const listened = await fetch(
+        "http://127.0.0.1:5000/recently_played/",
+        requestOptions
+      ).then((listened) => listened.json());
 
-    setlastliked(liked);
-    setlastlistened(listened);
-    setisLoading(false);
+      setlastliked(liked);
+      setlastlistened(listened);
+      setisLoading(false);
 
-    const newPDisplayed = liked.albums
-      .concat(liked.playlists)
-      .concat(liked.daily)
-      .concat(listened);
-    dispatch(changePDisplayed(newPDisplayed));
+      const newPDisplayed = liked.albums
+        .concat(liked.playlists)
+        .concat(liked.daily)
+        .concat(listened);
+      dispatch(changePDisplayed(newPDisplayed));
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+      setisLoading(false);
+    }
   };
 
   useEffect(() => {

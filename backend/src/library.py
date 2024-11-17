@@ -30,7 +30,6 @@ def get_all_artist(user):
             {
                 "id":artist['id'],
                 "name":artist['name'],
-                "artistimg":artist['image']
             }
         )
     return artist_list
@@ -61,7 +60,7 @@ def get_all_album(user):
         }
 
         cursor.execute(f'''
-            select T.id, T.title, T.audio, T.durationMs
+            select T.id, T.title,T.duration
             from TrackBelongsToAlbum B, Track T
             where B.album='{album['id']}' and T.id=B.track
         ''')
@@ -76,8 +75,7 @@ def get_all_album(user):
                     "songName":track['title'],
                     "songimg":album['image'],
                     "songArtist":album['name'],
-                    "link":track['audio'],
-                    "trackTime":track['durationMs']
+                    "trackTime":track['duration']
                 }
             )
             index += 1

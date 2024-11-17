@@ -9,7 +9,7 @@ import { PLAYLISTBTN } from "../../constants";
 import { PLAYLIST } from "../../data";
 import { useSelector, useDispatch } from "react-redux";
 import { selectUser } from "../../reducers/index";
-import playlist from "../../pages/playlist";
+import playlist from "../../pages/playlist"
 import { setSidebarPlaylists } from "../../actions/index";
 
 function Playlist() {
@@ -25,17 +25,26 @@ function Playlist() {
       mode: "cors",
     };
 
-    const fetchedPlaylists = await fetch(
-      "http://127.0.0.1:5000/library/get/",
-      requestOptions
-    ).then((fetchedPlaylists) => fetchedPlaylists.json());
-
-    setplaylists(fetchedPlaylists);
-    dispatch(setSidebarPlaylists(fetchedPlaylists));
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:5000/library/get/",
+        requestOptions
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const fetchedPlaylists = await response.json();
+      setplaylists(fetchedPlaylists);
+      dispatch(setSidebarPlaylists(fetchedPlaylists));
+    } catch (error) {
+      console.error("Failed to fetch playlists:", error);
+    }
   };
 
   useEffect(() => {
-    updatePlaylists();
+    if (user?.id) {
+      updatePlaylists();
+    }
   }, [user]);
 
   return (

@@ -9,7 +9,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const dipsatch = useDispatch();
+  const dispatch = useDispatch();
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -23,16 +23,27 @@ const Login = () => {
       mode: "cors",
     };
 
-    const res = await fetch(
-      "http://127.0.0.1:5000/auth/login/",
-      requestOptions
-    ).then((res) => res.json());
+    let res;
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:5000/auth/login/",
+        requestOptions
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      res = await response.json();
+    } catch (error) {
+      console.error("Fetch error: ", error);
+      setError(`Failed to fetch: ${error.message}`);
+      return;
+    }
 
     if (res.id) {
       var id = res.id;
       var username = res.username;
 
-      dipsatch(
+      dispatch(
         login({
           id: id,
           email: email,
@@ -42,7 +53,7 @@ const Login = () => {
         })
       );
     } else {
-      setError(res.error);
+      setError(`Login failed: ${res.error}`);
     }
   };
 

@@ -76,13 +76,7 @@ const Login = () => {
                 Insert your email
               </label>
               <input
-                className="
-                border border-gray-200
-                block
-                px-4
-                py-2
-                w-full
-                mt-2
+                className="border border-gray-20 block px-4 py-2 w-full mt-2
                 mb-6
                 placeholder-gray-600
               "

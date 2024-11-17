@@ -3,7 +3,7 @@ from __init__ import mysql
 import MySQLdb.cursors
 import string
 import random
-
+import hashlib
 auth_bp = Blueprint('auth', __name__)
 
 ID_EXISTS = (
@@ -12,13 +12,14 @@ ID_EXISTS = (
     "WHERE id = '{}'"
 )
 
-@auth_bp.route('/register/', methods=['POST'])
-def register():
+@auth_bp.route('/signup/', methods=['POST'])
+def signup():
     content = request.json
+    print(content)
     username = content['username'].replace("'", " ")
     password = content['password']
     email = content['email'].replace("'", " ")
-
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
     cursor.execute(f"SELECT * FROM User WHERE username='{username}'")
@@ -41,13 +42,13 @@ def register():
             cursor.execute(ID_EXISTS.format(id))
         cursor.execute(
             f"INSERT INTO User (id, username, email, password) VALUES('{id}', '{username}', '{email}', '{password}')")
-        cursor.execute(
-            f"INSERT INTO Playlist (id,creator,name) VALUES ('{id[::-1]}','treble#id#123456789123','DailySuggestion')")
-        cursor.execute(f'''
-           insert into TrackBelongsToPlaylist (track,playlist,addedDate) values 
-            ('35sVDinWrh5nYjpzPXe4qz','{id[::-1]}',NOW()),
-            ('1sDCjkSLqUvmNuiLPJM4fj','{id[::-1]}',NOW()),
-        ''')
+        # cursor.execute(
+        #     f"INSERT INTO Playlist (id,creator,name) VALUES ('{id[::-1]}','treble#id#123456789123','DailySuggestion')")
+        # cursor.execute(f'''
+        #    insert into TrackBelongsToPlaylist (track,playlist,addedDate) values 
+        #     ('35sVDinWrh5nYjpzPXe4qz','{id[::-1]}',NOW()),
+        #     ('1sDCjkSLqUvmNuiLPJM4fj','{id[::-1]}',NOW()),
+        # ''')
         mysql.connection.commit()
         return jsonify(id=id)
 

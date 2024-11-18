@@ -1,12 +1,11 @@
-from flask import Blueprint, Flask, request, jsonify
+from flask import Blueprint, request, jsonify
 from __init__ import mysql
 import MySQLdb.cursors
-from hovercolor import getColor
 
 recently_played_bp = Blueprint('recently_played', __name__)
 
 ALBUM_DATA = (
-    "SELECT AL.title, AL.id, AL.image, max(A.name) as name "
+    "SELECT AL.title, AL.id, max(A.name) as name "
     "FROM Album AL, Making M, Artist A "
     "WHERE AL.id=M.album and M.artist=A.id "
     "and AL.id = '{}' "
@@ -21,11 +20,11 @@ GET_TRACKS_FROM_ALBUM = (
 )
 
 GET_RECENTLY_PLAYED = (
-    "SELECT Tb.album, max(L.date) as date "
+    "SELECT Tb.album, L.date "
     "FROM ListenedTo L, TrackBelongsToAlbum Tb "
     "WHERE L.track=Tb.track and L.user = '{}' "
-    "GROUP BY Tb.album "
-    "ORDER BY L.date "
+    "GROUP BY Tb.album, L.date "
+    "ORDER BY L.date DESC "
     "limit 6"
 )
 
@@ -47,8 +46,6 @@ def recently_played():
         temp = {
             "title": album['title'],
             "link": album['id'],
-            "imgUrl": album['image'],
-            "hoverColor": getColor(album['image']), 
             "artist": album['name'],
             "playlistData": []
             }
@@ -62,7 +59,6 @@ def recently_played():
                     "id":track['id'],
                     "index": track['position'],
                     "songName": track['title'],
-                    "songimg": album['image'],
                     "songArtist": album['name'],
                     "trackTime": track['duration'],
                 }

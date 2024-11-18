@@ -83,21 +83,18 @@ function Home() {
           <div className={styles.SectionTitle}>
             <TitleL>Welcome</TitleL>
           </div>
-          {
             <div className={styles.SectionCards}>
               {lastliked.albums?.map((item) => {
                 return <PlaylistCardS key={item.title} data={item} />;
               })}
-              {lastliked.daily ? (
+              {lastliked.daily && (
                 <PlaylistCardS key="daily" data={lastliked.daily} />
-              ) : (
-                ""
               )}
               {lastliked.playlists?.map((item) => {
                 return <PlaylistCardS key={item.title} data={item} />;
               })}
             </div>
-          }
+
         </section>
 
         <section>

@@ -1,12 +1,11 @@
 from flask import Blueprint, Flask, request, jsonify
 from __init__ import mysql
 import MySQLdb.cursors
-from hovercolor import getColor
 
 welcome_bp = Blueprint('welcome', __name__)
 
 ALBUM_DATA = (
-    "SELECT AL.title, AL.id, AL.image, max(A.name) as name "
+    "SELECT AL.title, AL.id, max(A.name) as name "
     "FROM Album AL, Making M, Artist A, LikesAlbum Lk "
     "WHERE AL.id=M.album and M.artist=A.id and LK.album=AL.id "
     "and LK.user = '{}' "
@@ -17,7 +16,7 @@ ALBUM_DATA = (
 
 GET_TRACKS_FROM_ALBUM = (
     "SELECT Tb.position, T.id, T.title, T.duration "
-    "FROM Track T,  TrackBelongsToAlbum Tb, Album AL "
+    "FROM Track T, TrackBelongsToAlbum Tb, Album AL "
     "WHERE T.id=Tb.track and Tb.album=Al.id "
     "and Al.id = '{}'"
 )
@@ -32,9 +31,9 @@ PLAYLIST_DATA = (
 )
 
 GET_TRACKS_FROM_PLAYLIST = (
-    "SELECT T.id, T.title, T.duration, A.image "
-    "FROM Track T,  TrackBelongsToPlaylist Tb, Playlist P, TrackBelongsToAlbum Ta, Album A "
-    "WHERE T.id=Tb.track and Tb.playlist=P.id and T.id=Ta.track and Ta.album=A.id "
+    "SELECT T.id, T.title, T.duration "
+    "FROM Track T, TrackBelongsToPlaylist Tb, Playlist P "
+    "WHERE T.id=Tb.track and Tb.playlist=P.id "
     "and P.id = '{}' "
     "ORDER BY Tb.addedDate desc"
 )
@@ -64,8 +63,6 @@ def search_albums(id):
         temp = {
             "title": album['title'],
             "link": album['id'],
-            "imgUrl": album['image'],
-            "hoverColor": getColor(album['image']), 
             "artist": album['name'],
             "playlistData": []
             }
@@ -79,7 +76,6 @@ def search_albums(id):
                     "id":track['id'],
                     "index": track['position'],
                     "songName": track['title'],
-                    "songimg": album['image'],
                     "songArtist": album['name'],
                     "trackTime": track['duration'],
                 }
@@ -98,8 +94,6 @@ def search_playlists(id):
         temp = {
             "title": playlist['name'],
             "link": playlist['id'],
-            "imgUrl": "https://i.scdn.co/image/ab67616d0000b2734b37560bb0fb287011ae6a60",
-            "hoverColor": getColor("https://i.scdn.co/image/ab67616d0000b2734b37560bb0fb287011ae6a60"), 
             "artist": playlist['creator'],
             "playlistData": []
             }
@@ -114,7 +108,6 @@ def search_playlists(id):
                     "id":track['id'],
                     "index": str(index),
                     "songName": track['title'],
-                    "songimg": track['image'],
                     "songArtist": playlist['creator'],
                     "trackTime": track['duration'],
                 }

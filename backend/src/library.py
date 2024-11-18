@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
 from __init__ import mysql
 import MySQLdb.cursors
-from hovercolor import getColor
 
 library_bp = Blueprint('libary', __name__)
 
@@ -18,7 +17,7 @@ def library():
 def get_all_artist(user):
     cursor = cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute(f'''
-        select A.id, A.name, A.image
+        select A.id, A.name
         from FollowArtist F, Artist A
         where F.user='{user}' and F.artist=A.id
     ''')
@@ -40,7 +39,7 @@ def get_all_artist(user):
 def get_all_album(user):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute(f'''
-        select A.title, A.id, A.image, max(C.name) as name
+        select A.title, A.id,max(C.name) as name
         from LikesAlbum L, Album A, Making M, Artist C
         where L.user='{user}' and L.album=A.id and M.album=A.id and M.artist=C.id
         group by A.id
@@ -53,8 +52,6 @@ def get_all_album(user):
             "type":"album",
             "title":album['title'],
             "link":album['id'],
-            "imgUrl":album['image'],
-            "hoverColor":getColor(album['image']),
             "artist":album['name'],
             "playlistData":[]
         }
@@ -73,7 +70,6 @@ def get_all_album(user):
                     "index":str(index),
                     "id":track['id'],
                     "songName":track['title'],
-                    "songimg":album['image'],
                     "songArtist":album['name'],
                     "trackTime":track['duration']
                 }
@@ -103,14 +99,12 @@ def get_all_playlist(user):
             "type":"playlist",
             "title":playlist['name'],
             "link":playlist['id'],
-            "imgUrl":"https://i.scdn.co/image/ab67616d0000b2734b37560bb0fb287011ae6a60",
-            "hoverColor":getColor("https://i.scdn.co/image/ab67616d0000b2734b37560bb0fb287011ae6a60"),
             "artist":playlist['username'],
             "playlistData":[]
         }
 
         cursor.execute(f'''
-            select  T.id, T.title,T.audio,T.durationMs
+            select  T.id, T.title,T.duration
             from TrackBelongsToPlaylist B, Track T, TrackBelongsToAlbum E
             where B.playlist='{playlist['id']}' and B.track=T.id and E.track=T.id
             order by B.addedDate
@@ -120,7 +114,7 @@ def get_all_playlist(user):
         index = 0
         for track in tracks:
             cursor.execute(f'''
-                select A.image, C.name
+                select C.name
                 from TrackBelongsToAlbum B, Album A, Making M, Artist C
                 where B.track='{track['id']}' and B.album=A.id and M.album=B.album and M.artist=C.id
                 limit 1
@@ -131,10 +125,8 @@ def get_all_playlist(user):
                     "index":str(index),
                     "id":track['id'],
                     "songName":track['title'],
-                    "songimg":data['image'],
                     "songArtist":data['name'],
-                    "link":track['audio'],
-                    "trackTime":track['durationMs']
+                    "trackTime":track['duration']
                 }
             )
             index += 1

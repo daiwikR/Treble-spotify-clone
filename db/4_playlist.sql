@@ -1,3 +1,14 @@
+-- INSERT INTO User (
+--     id, 
+--     username, 
+--     email, 
+--     password
+-- ) VALUES (
+--     'treble#id#123456789123', 
+--     'adele', 
+--     'adele@example.com', 
+--     '27cc6994fc1c01ce6659c6bddca9b69c4c6a9418065e612c69d110b3f7b11f8a'
+-- );
 INSERT INTO Playlist (id,creator,name)
 VALUES ('2jU0k1emxxycV673rppvzT','treble#id#123456789123','adele');
 

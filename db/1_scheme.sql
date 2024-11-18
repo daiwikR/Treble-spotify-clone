@@ -1,4 +1,6 @@
 -- creating and using the database
+-- drop database treble;
+
 create database treble;
 use treble;
 
@@ -124,7 +126,6 @@ create table Playlist(
     id char(22) primary key, 
     creator varchar(30) not null,
     name varchar(30) not null, 
-
     foreign key (creator) references User(id) on delete cascade
 );
 
@@ -171,3 +172,4 @@ CREATE TRIGGER trackPlays
 AFTER INSERT ON ListenedTo
 FOR EACH ROW
 UPDATE Track SET Track.plays = 1 + Track.plays WHERE Track.id = new.track;
+select * from user;

@@ -69,3 +69,8 @@ INSERT INTO TrackBelongsToPlaylist(track,playlist,addedDate) VALUES('2PPN1HFpVot
 INSERT INTO TrackBelongsToPlaylist(track,playlist,addedDate) VALUES('2PPN1HFpVotjq7oJIqQbnx','fY1hQJ08pO7QHlPcB3uIvG',NOW());
 INSERT INTO TrackBelongsToPlaylist(track,playlist,addedDate) VALUES('3bNv3VuUOKgrf5hu3YcuRo','fY1hQJ08pO7QHlPcB3uIvG',NOW());
 
+#-----followers names 
+SELECT Follower.id,Follower.username
+FROM ((User AS MainUser JOIN FollowUser ON MainUser.id=FollowUser.followed) JOIN User AS Follower ON Follower.id=FollowUser.follower)
+WHERE MainUser.id='QKedDkxLZFOPQS8pAhkj01';
+
